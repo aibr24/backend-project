@@ -1,5 +1,5 @@
 const express = require("express");
-const games = require("./data");
+let games = require("./data");
 const cors = require("cors");
 
 //data
@@ -13,4 +13,16 @@ app.listen(8000, () => {
 
 app.get("/games", (req, res) => {
   res.json(games);
+});
+
+app.delete("/games/:gameId", (req, res) => {
+  const { gameId } = req.params;
+  const foundGame = games.find((game) => game.id === +gameId);
+  if (foundGame) {
+    games = games.filter((_game) => _game !== foundGame);
+  } else {
+    res.status(404).json({ message: "Not Found" });
+  }
+
+  res.status(204).end();
 });

@@ -29,6 +29,16 @@ const games = [
     description:
       "Players will live adventures in various worlds, through the eyes and characteristics of their character,They will have to fight, search, discuss, and be clever and convincing to the characters they meet… and sometimes even the other agents.Each player will be able to include the dose of 'roleplay' they want into the character they’ll have chosen. But they will also need to optimize their actions",
   },
+  {
+    id: 4,
+    name: "chime Stories",
+    price: 11,
+    slug: "",
+    image:
+      "https://www.theboardgamehut.co.uk/user/products/large/timestories.png",
+    description:
+      "Players will live adventures in various worlds, through the eyes and characteristics of their character,They will have to fight, search, discuss, and be clever and convincing to the characters they meet… and sometimes even the other agents.Each player will be able to include the dose of 'roleplay' they want into the character they’ll have chosen. But they will also need to optimize their actions",
+  },
 ];
 
 module.exports = games;
