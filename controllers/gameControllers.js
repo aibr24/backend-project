@@ -1,36 +1,50 @@
-let games = require("../data");
+// let games = require("../data");
+const { Game } = require("../db/models");
 
-exports.gameList = (req, res) => {
-  res.json(games);
-};
-
-exports.createGame = (req, res) => {
-  id = games[games.length - 1].id + 1;
-  const newGame = { id, ...req.body };
-  games.push(newGame);
-  res.status(201).json(newGame);
-};
-
-exports.updateGame = (req, res) => {
-  const { gameId } = req.params;
-  const foundGame = games.find((game) => game.id === +gameId);
-  if (foundGame) {
-    for (const key in foundGame) foundGame[key] = req.body[key];
-    res.status(204).end();
-  } else {
-    res.status(404).json({ message: "Game Not Found" });
+exports.gameList = async (req, res) => {
+  try {
+    const games = await Game.findAll();
+    res.json(games);
+  } catch (error) {
+    console.log(`AINT NO ${error} BAD ENOUGH!`);
   }
 };
 
-exports.deleteGame = (req, res) => {
-  const { gameId } = req.params;
-  const foundGame = games.find((game) => game.id === +gameId);
-  if (foundGame) {
-    games = games.filter((_game) => _game !== foundGame);
-    res.status(204).end();
-  } else {
-    res.status(404).json({ message: "Not Found" });
+exports.createGame = async (req, res) => {
+  try {
+    const newGame = await Game.create(req.body);
+    res.status(201).json(newGame);
+  } catch (error) {
+    console.log("Creat Func -->", error);
   }
+};
 
-  res.status(204).end();
+exports.updateGame = async (req, res) => {
+  const { gameId } = req.params;
+  try {
+    const foundGame = await Game.findByPk(gameId);
+    if (foundGame) {
+      await foundGame.update(req.body);
+      res.status(204).end();
+    } else {
+      res.status(404).json({ message: "Game Not Found" });
+    }
+  } catch (error) {
+    console.log("Update Func --> ", error);
+  }
+};
+
+exports.deleteGame = async (req, res) => {
+  const { gameId } = req.params;
+  try {
+    const foundGame = await Game.findByPk(gameId);
+    if (foundGame) {
+      await foundGame.destroy();
+      res.status(204).end();
+    } else {
+      res.status(404).json({ message: "Game Not Found" });
+    }
+  } catch (error) {
+    console.log("Delete Func --> ", error);
+  }
 };
