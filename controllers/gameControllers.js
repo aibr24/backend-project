@@ -1,50 +1,62 @@
 // let games = require("../data");
-const { Game } = require("../db/models");
+const { Game, Publisher } = require("../db/models");
 
-exports.gameList = async (req, res) => {
+exports.fetchGame = async (gameId, next) => {
   try {
-    const games = await Game.findAll();
+    const game = await Game.findByPk(gameId);
+    return game;
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.gameList = async (req, res, next) => {
+  try {
+    const games = await Game.findAll({
+      attributes: { exclude: ["publisherId"] },
+      include: {
+        model: Publisher,
+        as: "publisher",
+        attributes: ["name"],
+      },
+    });
     res.json(games);
   } catch (error) {
-    console.log(`AINT NO ${error} BAD ENOUGH!`);
+    next(error);
   }
 };
 
-exports.createGame = async (req, res) => {
-  try {
-    const newGame = await Game.create(req.body);
-    res.status(201).json(newGame);
-  } catch (error) {
-    console.log("Creat Func -->", error);
-  }
-};
+// exports.createGame = async (req, res, next) => {
+//   try {
+//     req.body.image = `${req.protocol}://${req.get("host")}/media/${
+//       req.file.filename
+//     }`;
+//     const newGame = await Game.create(req.body);
+//     res.status(201).json(newGame);
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
-exports.updateGame = async (req, res) => {
-  const { gameId } = req.params;
+exports.updateGame = async (req, res, next) => {
   try {
-    const foundGame = await Game.findByPk(gameId);
-    if (foundGame) {
-      await foundGame.update(req.body);
-      res.status(204).end();
-    } else {
-      res.status(404).json({ message: "Game Not Found" });
+    if (req.file) {
+      req.body.image = `${req.protocol}://${req.get("host")}/media/${
+        req.file.filename
+      }`;
     }
+    await req.game.update(req.body);
+    res.status(204).end();
   } catch (error) {
-    console.log("Update Func --> ", error);
+    next(error);
   }
 };
 
-exports.deleteGame = async (req, res) => {
-  const { gameId } = req.params;
+exports.deleteGame = async (req, res, next) => {
   try {
-    const foundGame = await Game.findByPk(gameId);
-    if (foundGame) {
-      await foundGame.destroy();
-      res.status(204).end();
-    } else {
-      res.status(404).json({ message: "Game Not Found" });
-    }
+    await req.game.destroy(req.body);
+    res.status(204).end();
   } catch (error) {
-    console.log("Delete Func --> ", error);
+    next(error);
   }
 };
