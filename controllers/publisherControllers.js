@@ -16,7 +16,7 @@ exports.publisherList = async (req, res, next) => {
         {
           model: Game,
           as: "games",
-          attributes: ["name"],
+          attributes: ["id"],
         },
       ],
     });
@@ -54,13 +54,13 @@ exports.updatePublisher = async (req, res, next) => {
 
 exports.deletePublisher = async (req, res, next) => {
   try {
-    await req.Publisher.destroy(req.body);
+    await req.publisher.destroy(req.body);
     res.status(204).end();
   } catch (error) {
     next(error);
   }
 };
-
+// Game Create
 exports.createGame = async (req, res, next) => {
   console.log(req);
   try {

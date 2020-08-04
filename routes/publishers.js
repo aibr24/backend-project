@@ -30,7 +30,7 @@ router.param("publisherId", async (req, res, next, publisherId) => {
 router.get("/", publisherList);
 router.post("/", upload.single("image"), createPublisher);
 
-// cookie create
+// game create
 router.post("/:publisherId/games", upload.single("image"), createGame);
 
 router.put("/:publisherId", upload.single("image"), updatePublisher);

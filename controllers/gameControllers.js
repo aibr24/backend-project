@@ -26,18 +26,6 @@ exports.gameList = async (req, res, next) => {
   }
 };
 
-// exports.createGame = async (req, res, next) => {
-//   try {
-//     req.body.image = `${req.protocol}://${req.get("host")}/media/${
-//       req.file.filename
-//     }`;
-//     const newGame = await Game.create(req.body);
-//     res.status(201).json(newGame);
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-
 exports.updateGame = async (req, res, next) => {
   try {
     if (req.file) {
