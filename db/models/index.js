@@ -1,5 +1,6 @@
 const Game = require("./Game");
 const Publisher = require("./Publisher");
+const User = require("./User");
 
 Publisher.hasMany(Game, {
   as: "games",
@@ -8,4 +9,4 @@ Publisher.hasMany(Game, {
 });
 Game.belongsTo(Publisher, { as: "publisher", allowNull: false });
 
-module.exports = { Publisher, Game };
+module.exports = { Publisher, Game, User };

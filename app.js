@@ -12,10 +12,12 @@ app.use(bodyParser.json());
 //routes
 const gameRoutes = require("./routes/games");
 const publisherRoutes = require("./routes/publishers");
+const userRoutes = require("./routes/users");
 
 //routers
 app.use("/games", gameRoutes);
 app.use("/publishers", publisherRoutes);
+app.use("/register", userRoutes);
 //media router
 app.use("/media", express.static(path.join(__dirname, "media")));
 
@@ -34,7 +36,7 @@ app.use((err, req, res, next) => {
 
 const run = async () => {
   try {
-    await db.sync();
+    await db.sync({ alter: true });
 
     console.log("Connection to DB Succs");
   } catch (error) {
