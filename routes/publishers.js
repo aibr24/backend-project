@@ -38,10 +38,24 @@ router.post(
 );
 
 // Game Create
-router.post("/:publisherId/games", upload.single("image"), createGame);
+router.post(
+  "/:publisherId/games",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
+  createGame
+);
 
-router.put("/:publisherId", upload.single("image"), updatePublisher);
+router.put(
+  "/:publisherId",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
+  updatePublisher
+);
 
-router.delete("/:publisherId", deletePublisher);
+router.delete(
+  "/:publisherId",
+  passport.authenticate("jwt", { session: false }),
+  deletePublisher
+);
 
 module.exports = router;

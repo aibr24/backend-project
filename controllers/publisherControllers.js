@@ -28,9 +28,18 @@ exports.publisherList = async (req, res, next) => {
 
 exports.createPublisher = async (req, res, next) => {
   try {
+    const foundPublisher = await Publisher.findOne({
+      where: { userId: req.user.id },
+    });
+    if (foundPublisher) {
+      const err = new Error("Publisher Already Exists");
+      err.status = 400;
+      next(err);
+    }
     req.body.image = `${req.protocol}://${req.get("host")}/media/${
       req.file.filename
     }`;
+    req.body.userId = req.user.id;
     const newPublisher = await Publisher.create(req.body);
     res.status(201).json(newPublisher);
   } catch (error) {
@@ -40,13 +49,19 @@ exports.createPublisher = async (req, res, next) => {
 
 exports.updatePublisher = async (req, res, next) => {
   try {
-    if (req.file) {
-      req.body.image = `${req.protocol}://${req.get("host")}/media/${
-        req.file.filename
-      }`;
+    if (req.user.role === "admin" || req.user.id === req.publisher.userId) {
+      if (req.file) {
+        req.body.image = `${req.protocol}://${req.get("host")}/media/${
+          req.file.filename
+        }`;
+      }
+      await req.publisher.update(req.body);
+      res.status(204).end();
+    } else {
+      const err = new Error("Unauthorized");
+      err.status = 401;
+      next(err);
     }
-    await req.publisher.update(req.body);
-    res.status(204).end();
   } catch (error) {
     next(error);
   }
@@ -54,22 +69,35 @@ exports.updatePublisher = async (req, res, next) => {
 
 exports.deletePublisher = async (req, res, next) => {
   try {
-    await req.publisher.destroy(req.body);
-    res.status(204).end();
+    if (req.user.role === "admin" || req.user.id === req.publisher.userId) {
+      await req.publisher.destroy(req.body);
+      res.status(204).end();
+    } else {
+      const err = new Error("Unauthorized");
+      err.status = 401;
+      next(err);
+    }
   } catch (error) {
     next(error);
   }
 };
+
 // Game Create
 exports.createGame = async (req, res, next) => {
   console.log(req);
   try {
-    req.body.image = `${req.protocol}://${req.get("host")}/media/${
-      req.file.filename
-    }`;
-    req.body.publisherId = req.publisher.id;
-    const newGame = await Game.create(req.body);
-    res.status(201).json(newGame);
+    if (req.user.id === req.publisher.userId) {
+      req.body.image = `${req.protocol}://${req.get("host")}/media/${
+        req.file.filename
+      }`;
+      req.body.publisherId = req.publisher.id;
+      const newGame = await Game.create(req.body);
+      res.status(201).json(newGame);
+    } else {
+      const err = new Error("Unauthorized");
+      err.status = 401;
+      next(err);
+    }
   } catch (error) {
     next(error);
   }

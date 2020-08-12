@@ -9,4 +9,7 @@ Publisher.hasMany(Game, {
 });
 Game.belongsTo(Publisher, { as: "publisher", allowNull: false });
 
+User.hasOne(Publisher, { as: "publisher", foreignKey: "userId" });
+Publisher.belongsTo(User, { as: "user" });
+
 module.exports = { Publisher, Game, User };

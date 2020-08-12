@@ -28,13 +28,19 @@ exports.gameList = async (req, res, next) => {
 
 exports.updateGame = async (req, res, next) => {
   try {
-    if (req.file) {
-      req.body.image = `${req.protocol}://${req.get("host")}/media/${
-        req.file.filename
-      }`;
+    if (req.user.id === req.publisher.userId) {
+      if (req.file) {
+        req.body.image = `${req.protocol}://${req.get("host")}/media/${
+          req.file.filename
+        }`;
+      }
+      await req.game.update(req.body);
+      res.status(204).end();
+    } else {
+      const err = new Error("Unauthorized");
+      err.status = 401;
+      next(err);
     }
-    await req.game.update(req.body);
-    res.status(204).end();
   } catch (error) {
     next(error);
   }
@@ -42,8 +48,14 @@ exports.updateGame = async (req, res, next) => {
 
 exports.deleteGame = async (req, res, next) => {
   try {
-    await req.game.destroy(req.body);
-    res.status(204).end();
+    if (req.user.id === req.publisher.userId) {
+      await req.game.destroy(req.body);
+      res.status(204).end();
+    } else {
+      const err = new Error("Unauthorized");
+      err.status = 401;
+      next(err);
+    }
   } catch (error) {
     next(error);
   }
