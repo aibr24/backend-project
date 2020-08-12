@@ -3,12 +3,16 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const db = require("./db");
 const path = require("path");
+const passport = require("passport");
+//Strategies
+const { localStrategy, jwtStrategy } = require("./middleware/passport");
 
 const app = express();
-
 app.use(cors());
 app.use(bodyParser.json());
-
+app.use(passport.initialize());
+passport.use(jwtStrategy);
+passport.use(localStrategy);
 //routes
 const gameRoutes = require("./routes/games");
 const publisherRoutes = require("./routes/publishers");
@@ -17,7 +21,7 @@ const userRoutes = require("./routes/users");
 //routers
 app.use("/games", gameRoutes);
 app.use("/publishers", publisherRoutes);
-app.use("/register", userRoutes);
+app.use(userRoutes);
 //media router
 app.use("/media", express.static(path.join(__dirname, "media")));
 

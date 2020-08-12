@@ -12,6 +12,7 @@ const {
 
 //Middleware
 const upload = require("../middleware/multer");
+const passport = require("passport");
 
 const router = express.Router();
 
@@ -28,9 +29,15 @@ router.param("publisherId", async (req, res, next, publisherId) => {
 });
 
 router.get("/", publisherList);
-router.post("/", upload.single("image"), createPublisher);
+//Publisher Create
+router.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
+  createPublisher
+);
 
-// game create
+// Game Create
 router.post("/:publisherId/games", upload.single("image"), createGame);
 
 router.put("/:publisherId", upload.single("image"), updatePublisher);

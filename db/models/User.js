@@ -17,6 +17,10 @@ User.init(
     firstName: {
       type: DataTypes.STRING,
     },
+    role: {
+      type: DataTypes.STRING,
+      defaultValue: "customer",
+    },
     lastName: {
       type: DataTypes.STRING,
     },
