@@ -40,7 +40,7 @@ app.use((err, req, res, next) => {
 
 const run = async () => {
   try {
-    await db.sync({ force: true });
+    await db.sync();
 
     console.log("Connection to DB Succs");
   } catch (error) {

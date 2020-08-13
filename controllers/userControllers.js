@@ -13,7 +13,6 @@ exports.register = async (req, res, next) => {
       id: newUser.id,
       username: newUser.username,
       role: newUser.role,
-      publisherId: null,
       expires: Date.now() + JWT_EXPIRATION_MS,
     };
     const token = jwt.sign(JSON.stringify(payload), JWT_SECRET);
@@ -24,15 +23,19 @@ exports.register = async (req, res, next) => {
 };
 
 exports.signin = async (req, res, next) => {
-  const { user } = req;
-  const publisher = await Publisher.findOne({ where: { userId: user.id } });
-  const payload = {
-    id: user.id,
-    username: user.username,
-    role: user.role,
-    publisherId: publisher.id,
-    expires: Date.now() + JWT_EXPIRATION_MS,
-  };
-  const token = jwt.sign(JSON.stringify(payload), JWT_SECRET);
-  res.json({ token });
+  try {
+    const { user } = req;
+    const publisher = await Publisher.findOne({ where: { userId: user.id } });
+    const payload = {
+      id: user.id,
+      username: user.username,
+      role: user.role,
+      publisherId: publisher ? publisher.id : null,
+      expires: Date.now() + JWT_EXPIRATION_MS,
+    };
+    const token = jwt.sign(JSON.stringify(payload), JWT_SECRET);
+    res.json({ token });
+  } catch (error) {
+    next(error);
+  }
 };
