@@ -37,9 +37,9 @@ exports.createPublisher = async (req, res, next) => {
       return next(err);
     }
     if (req.file) {
-      req.body.image = `${req.protocol}://${req.get("host")}/media/${
-        req.file.filename
-      }`;
+      req.body.image = `${process.env.PORT ? "https" : "http"}://${req.get(
+        "host"
+      )}/media/${req.file.filename}`;
     }
     req.body.userId = req.user.id;
     const newPublisher = await Publisher.create(req.body);
@@ -53,9 +53,9 @@ exports.updatePublisher = async (req, res, next) => {
   try {
     if (req.user.role === "admin" || req.user.id === req.publisher.userId) {
       if (req.file) {
-        req.body.image = `${req.protocol}://${req.get("host")}/media/${
-          req.file.filename
-        }`;
+        req.body.image = `${process.env.PORT ? "https" : "http"}://${req.get(
+          "host"
+        )}/media/${req.file.filename}`;
       }
       await req.publisher.update(req.body);
       res.status(204).end();
@@ -89,9 +89,11 @@ exports.createGame = async (req, res, next) => {
   console.log(req);
   try {
     if (req.user.id === req.publisher.userId) {
-      req.body.image = `${req.protocol}://${req.get("host")}/media/${
-        req.file.filename
-      }`;
+      if (req.file) {
+        req.body.image = `${process.env.PORT ? "https" : "http"}://${req.get(
+          "host"
+        )}/media/${req.file.filename}`;
+      }
       req.body.publisherId = req.publisher.id;
       const newGame = await Game.create(req.body);
       res.status(201).json(newGame);
