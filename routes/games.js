@@ -10,6 +10,7 @@ const {
 
 //Middleware
 const upload = require("../middleware/multer");
+const passport = require("passport");
 
 const router = express.Router();
 
@@ -29,7 +30,12 @@ router.get("/", gameList);
 
 // router.post("/", upload.single("image"), createGame);
 
-router.put("/:gameId", upload.single("image"), updateGame);
+router.put(
+  "/:gameId",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
+  updateGame
+);
 
 router.delete("/:gameId", deleteGame);
 

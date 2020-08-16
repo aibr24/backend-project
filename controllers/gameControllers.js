@@ -3,7 +3,13 @@ const { Game, Publisher } = require("../db/models");
 
 exports.fetchGame = async (gameId, next) => {
   try {
-    const game = await Game.findByPk(gameId);
+    const game = await Game.findByPk(gameId, {
+      include: {
+        model: Publisher,
+        as: "publisher",
+        attributes: ["userId"],
+      },
+    });
     return game;
   } catch (error) {
     next(error);
@@ -28,7 +34,7 @@ exports.gameList = async (req, res, next) => {
 
 exports.updateGame = async (req, res, next) => {
   try {
-    if (req.user.id === req.publisher.userId) {
+    if (req.user.id === req.game.publisher.userId) {
       if (req.file) {
         req.body.image = `${req.protocol}://${req.get("host")}/media/${
           req.file.filename

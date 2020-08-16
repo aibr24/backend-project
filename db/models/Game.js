@@ -20,7 +20,6 @@ Game.init(
     },
     image: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
     description: {
       type: DataTypes.STRING,

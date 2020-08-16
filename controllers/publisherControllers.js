@@ -34,11 +34,13 @@ exports.createPublisher = async (req, res, next) => {
     if (foundPublisher) {
       const err = new Error("Publisher Already Exists");
       err.status = 400;
-      next(err);
+      return next(err);
     }
-    req.body.image = `${req.protocol}://${req.get("host")}/media/${
-      req.file.filename
-    }`;
+    if (req.file) {
+      req.body.image = `${req.protocol}://${req.get("host")}/media/${
+        req.file.filename
+      }`;
+    }
     req.body.userId = req.user.id;
     const newPublisher = await Publisher.create(req.body);
     res.status(201).json(newPublisher);
