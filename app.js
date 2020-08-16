@@ -38,6 +38,8 @@ app.use((err, req, res, next) => {
   res.json({ message: err.message || "Internal Server Error" });
 });
 
+const PORT = process.env.PORT || 8000;
+
 const run = async () => {
   try {
     await db.sync();
@@ -46,8 +48,8 @@ const run = async () => {
   } catch (error) {
     console.log("Connection to DB Not Succs", error);
   }
-  app.listen(8000, () => {
-    console.log("The application is running on localhost:8000");
+  app.listen(PORT, () => {
+    console.log(`The application is running on  ${PORT}`);
   });
 };
 run();
