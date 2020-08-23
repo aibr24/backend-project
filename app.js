@@ -17,11 +17,13 @@ passport.use(localStrategy);
 const gameRoutes = require("./routes/games");
 const publisherRoutes = require("./routes/publishers");
 const userRoutes = require("./routes/users");
+const orderRoutes = require("./routes/orders");
 
 //routers
 app.use("/games", gameRoutes);
 app.use("/publishers", publisherRoutes);
 app.use(userRoutes);
+app.use(orderRoutes);
 //media router
 app.use("/media", express.static(path.join(__dirname, "media")));
 
